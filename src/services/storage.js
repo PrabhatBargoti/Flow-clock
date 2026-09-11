@@ -81,8 +81,6 @@ export function normalizeState(candidate) {
         .filter(Boolean)
         .slice(-500)
     : [];
-  // Very early V1 installs may contain activity without session history. Convert
-  // that valid activity into a single legacy session per day so it survives V2.
   if (!sessions.length && isObject(candidate.activity)) {
     sessions = Object.entries(candidate.activity)
       .map(([key, entry]) => {
