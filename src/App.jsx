@@ -28,14 +28,17 @@ function AppShell({ children, view, setView }) {
       : undefined;
 
   return (
-    <main className={`app theme-${flow.preferences.themeId}`} style={themeStyle}>
+    <main
+      className={`app theme-${flow.preferences.themeId}`}
+      style={themeStyle}
+    >
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
       <Topbar view={view} setView={setView} />
       {(!storageAvailable || persistenceError) && (
         <p className="notice" role="status">
-          Your browser cannot save Flow Clock data right now. Changes will last only until
-          this tab closes.
+          Your browser cannot save Flow Clock data right now. Changes will last
+          only until this tab closes.
         </p>
       )}
       {children}

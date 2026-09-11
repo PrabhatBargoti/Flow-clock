@@ -21,7 +21,10 @@ export function FlowProvider({ children }) {
   const [initial] = useState(() => loadState());
   const [flow, setFlow] = useState(initial.state);
   const [completion, setCompletion] = useState(null);
-  const [persistenceError, setPersistenceError] = useReducer((_, value) => value, false);
+  const [persistenceError, setPersistenceError] = useReducer(
+    (_, value) => value,
+    false,
+  );
   const storageAvailable = initial.storageAvailable;
   const stopwatch = useStopwatch();
 
@@ -42,7 +45,10 @@ export function FlowProvider({ children }) {
     [flow.activity],
   );
   const grid = useMemo(() => activityDays(flow.activity), [flow.activity]);
-  const longestStreak = useMemo(() => calculateLongestStreak(flow.activity), [flow.activity]);
+  const longestStreak = useMemo(
+    () => calculateLongestStreak(flow.activity),
+    [flow.activity],
+  );
   const stats = useMemo(() => calculateStats(flow.sessions), [flow.sessions]);
   const defaultModeIds = useMemo(
     () => new Set(defaultModes.map((m) => m.id)),
@@ -102,10 +108,14 @@ export function FlowProvider({ children }) {
           sessionCount: old.sessionCount + 1,
         };
       }
-      const nextStreak = meaningful ? calculateCurrentStreak(activity) : calculateCurrentStreak(current.activity);
+      const nextStreak = meaningful
+        ? calculateCurrentStreak(activity)
+        : calculateCurrentStreak(current.activity);
       const unlockedThemes = [...current.rewards.unlockedThemes];
-      if (nextStreak >= 7 && !unlockedThemes.includes("light")) unlockedThemes.push("light");
-      if (nextStreak >= 30 && !unlockedThemes.includes("minimal")) unlockedThemes.push("minimal");
+      if (nextStreak >= 7 && !unlockedThemes.includes("light"))
+        unlockedThemes.push("light");
+      if (nextStreak >= 30 && !unlockedThemes.includes("minimal"))
+        unlockedThemes.push("minimal");
       return {
         ...current,
         sessions: [...current.sessions, session].slice(-SESSION_HISTORY_LIMIT),
@@ -113,7 +123,15 @@ export function FlowProvider({ children }) {
         rewards: { ...current.rewards, unlockedThemes },
       };
     });
-    if (meaningful) setCompletion({ mode: selectedMode, durationMs, streak: calculateCurrentStreak({ ...flow.activity, [localDateKey(endedAt)]: true }) });
+    if (meaningful)
+      setCompletion({
+        mode: selectedMode,
+        durationMs,
+        streak: calculateCurrentStreak({
+          ...flow.activity,
+          [localDateKey(endedAt)]: true,
+        }),
+      });
   }
 
   function addMode(name) {
