@@ -8,6 +8,14 @@ export function formatDuration(durationMs) {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
 }
 
+export function formatFocusDuration(durationMs) {
+  const totalMinutes = Math.max(0, Math.floor(durationMs / 60_000))
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+  if (hours) return `${hours}h${minutes ? ` ${minutes}m` : ''}`
+  return `${minutes}m`
+}
+
 export function formatClock(date, format) {
   return new Intl.DateTimeFormat(undefined, {
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: format === '12h',

@@ -12,7 +12,22 @@ export function calculateCurrentStreak(activity, now = new Date()) {
   return streak
 }
 
-export function activityDays(activity, count = 84) {
+export function calculateLongestStreak(activity) {
+  const keys = Object.keys(activity).sort()
+  let longest = 0
+  let current = 0
+  let previous = null
+  for (const key of keys) {
+    const date = parseDateKey(key)
+    if (previous && Math.round((date - previous) / 86_400_000) === 1) current += 1
+    else current = 1
+    longest = Math.max(longest, current)
+    previous = date
+  }
+  return longest
+}
+
+export function activityDays(activity, count = 365) {
   const today = new Date()
   const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - count + 1)
   return Array.from({ length: count }, (_, index) => {

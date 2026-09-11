@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { clearStopwatch, loadStopwatch, saveStopwatch } from '../services/storage'
 
 const initial = loadStopwatch() || { running: false, startedAt: null, sessionStartedAt: null, elapsedMs: 0 }
@@ -9,6 +9,7 @@ function elapsedAt(timer, now = Date.now()) {
 
 export function useStopwatch() {
   const [timer, setTimer] = useState(initial)
+  const timerRef = useRef(initial)
   const [now, setNow] = useState(() => new Date().valueOf())
 
   useEffect(() => {
@@ -17,21 +18,30 @@ export function useStopwatch() {
     return () => window.clearInterval(interval)
   }, [timer.running])
 
-  useEffect(() => { saveStopwatch(timer) }, [timer])
+  useEffect(() => { timerRef.current = timer; saveStopwatch(timer) }, [timer])
 
   const elapsedMs = useMemo(() => elapsedAt(timer, now), [timer, now])
   const start = useCallback(() => setTimer((current) => {
     if (current.running) return current
     const startedAt = Date.now()
-    return { ...current, running: true, startedAt, sessionStartedAt: current.sessionStartedAt || startedAt }
+    const next = { ...current, running: true, startedAt, sessionStartedAt: current.sessionStartedAt || startedAt }
+    timerRef.current = next
+    return next
   }), [])
-  const pause = useCallback(() => setTimer((current) => ({ ...current, elapsedMs: elapsedAt(current), running: false, startedAt: null })), [])
+  const pause = useCallback(() => setTimer((current) => {
+    const next = { ...current, elapsedMs: elapsedAt(current), running: false, startedAt: null }
+    timerRef.current = next
+    return next
+  }), [])
   const reset = useCallback(() => {
-    const completed = { durationMs: elapsedAt(timer), startedAt: timer.sessionStartedAt || timer.startedAt || Date.now() }
-    setTimer({ running: false, startedAt: null, sessionStartedAt: null, elapsedMs: 0 })
+    const current = timerRef.current
+    const completed = { durationMs: elapsedAt(current), startedAt: current.sessionStartedAt || current.startedAt || Date.now() }
+    const next = { running: false, startedAt: null, sessionStartedAt: null, elapsedMs: 0 }
+    timerRef.current = next
+    setTimer(next)
     clearStopwatch()
     return completed
-  }, [timer])
+  }, [])
 
   return { elapsedMs, running: timer.running, start, pause, reset }
 }

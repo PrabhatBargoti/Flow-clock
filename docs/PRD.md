@@ -1,351 +1,638 @@
-# Flow Clock — V1 Product Requirements Document
+# Flow Clock — V1.5 Product Requirements Document
 
 ## Project
 
-Flow Clock is a productivity SaaS designed to make studying and learning feel less boring by turning focused work into a rewarding experience.
+Flow Clock V1.5 is an iteration of Flow Clock focused on improving the core productivity experience introduced in V1.
 
-The app combines a clock, stopwatch, focus modes, themes, and streaks to create a simple productivity loop:
+V1 establishes the foundation:
 
-> Work → Build streak → Unlock/reward → Customize → Keep working
+> Clock → Stopwatch → Focus Mode → Activity → Streak
+
+V1.5 improves this loop with better rewards, statistics, themes, animations, session history, and overall UX.
+
+The goal is to make Flow Clock feel more polished and motivating without introducing authentication, cloud databases, payments, or unnecessary backend infrastructure.
 
 ---
 
-## Goal
+# Goal
 
-### Problem
+## Problem
 
-Many students and learners want to study, learn skills, or work consistently but struggle because the activity feels boring and there is little immediate reward.
+Users may start using Flow Clock but lose motivation because simply tracking time and maintaining a streak is not enough to make the experience engaging over a long period.
 
-Flow Clock aims to make focused work more engaging by giving users visible progress and small rewards for consistency.
+V1.5 should make progress more visible and rewarding.
 
-### Solution
+## Solution
 
-Flow Clock provides:
+V1.5 introduces:
 
-- A simple clock for everyday use
-- A stopwatch for tracking work sessions
-- Focus modes for different activities
-- Daily activity tracking
-- Streaks similar to GitHub contribution streaks
-- Themes and customization
-- Progress-based rewards
-- Premium features for users who want more customization and statistics
+* Better session tracking
+* Session history
+* Improved streaks
+* More meaningful statistics
+* Better rewards
+* More themes
+* Improved animations
+* Better focus modes
+* Improved responsive UX
+* Better performance
 
-The goal is not to force productivity.
+The product should create a stronger loop:
 
-The goal is to make starting and continuing work feel more rewarding.
+```text
+Start session
+      ↓
+Focus
+      ↓
+Complete session
+      ↓
+Earn progress/reward
+      ↓
+Streak grows
+      ↓
+Statistics improve
+      ↓
+Unlock/customize
+      ↓
+Return tomorrow
+```
 
 ---
 
 # Users
 
-## Primary Users
+The primary users remain:
 
-### Students
+* Students
+* Self-learners
+* Programmers
+* Readers
+* People building daily habits
+* Productivity-focused users
 
-Students who want to:
-
-- Study consistently
-- Track study sessions
-- Build daily streaks
-- Make studying more engaging
-
-### Learners
-
-People learning:
-
-- Programming
-- Design
-- Languages
-- Music
-- Other skills
-
-### Productivity-focused Users
-
-Users who enjoy:
-
-- Streak systems
-- Progress tracking
-- Customization
-- Minimal productivity tools
+V1.5 should especially benefit users who already used Flow Clock in V1 and want more reasons to keep using it.
 
 ---
 
 # Core Features
 
-## Feature 1 — Clock
+## Feature 1 — Improved Stopwatch / Focus Sessions
 
-Display the current:
-
-- Time
-- Date
-- Day
-
-The clock should be visible as the main part of the application.
+The stopwatch from V1 becomes a proper session tracker.
 
 ### Requirements
 
-- Support 12-hour and 24-hour formats
-- Update time in real time
-- Responsive layout
-- Work on phone, tablet, and desktop
-- Minimal and distraction-free design
+Users can:
+
+* Start a session
+* Pause a session
+* Resume a session
+* Complete a session
+* Cancel/reset a session
+
+Each completed session should record:
+
+* Date
+* Start time
+* End time
+* Duration
+* Mode
+* Session status
+
+Example:
+
+```text
+September 11
+
+Coding
+1h 24m
+
+Study
+45m
+
+Reading
+30m
+```
+
+### Session Validation
+
+Very short accidental sessions should not count toward meaningful productivity.
+
+The application should define a minimum meaningful session duration.
+
+Example:
+
+```text
+< 5 minutes
+= not counted
+
+≥ 5 minutes
+= meaningful session
+```
+
+The exact threshold should be configurable in the implementation.
 
 ---
 
-## Feature 2 — Stopwatch
+# Feature 2 — Session History
 
-Users can track how long they work.
+Users can see their previous completed sessions.
 
-### Controls
+### Display
 
-- Start
-- Pause
-- Resume
-- Reset
+Each session should show:
+
+* Mode
+* Duration
+* Date
+* Time
+
+Example:
+
+```text
+Today
+
+Coding          1h 20m
+Study             45m
+Reading           30m
+```
 
 ### Requirements
 
-- Display elapsed time
-- Accurate time tracking
-- Continue working correctly when the browser tab is inactive where possible
-- Store relevant session data locally
-- Responsive controls
-
-The stopwatch is the primary mechanism for measuring productive activity in V1.
+* Newest sessions first
+* Group sessions by date
+* Allow users to view recent history
+* Store history in localStorage
+* Avoid storing unnecessary data
 
 ---
 
-## Feature 3 — Focus Modes
+# Feature 3 — Improved Streak System
 
-Users can select a mode representing what they are currently doing.
+The V1 streak system is improved to make progress more meaningful.
+
+### Daily Activity
+
+A day becomes active when the user completes meaningful focused work.
+
+Example:
+
+```text
+5+ minutes of meaningful work
+        ↓
+Active day
+        ↓
+Streak can continue
+```
+
+### Streak Information
+
+Display:
+
+* Current streak
+* Longest streak
+* Total active days
+* Today's status
+
+Example:
+
+```text
+🔥 12 Day Streak
+
+Longest: 24 days
+Active days: 86
+```
+
+### Streak Protection
+
+V1.5 may introduce a simple streak protection/recovery mechanic.
+
+Example:
+
+* User misses one day
+* Streak protection can preserve the streak
+
+This should be optional and should not make streaks meaningless.
+
+If implemented, users should have a limited number of protections.
+
+---
+
+# Feature 4 — GitHub-Style Activity Grid
+
+Improve the activity visualization from V1.
+
+Each day represents productivity activity.
+
+Activity intensity should represent meaningful work duration.
+
+Example:
+
+```text
+Less                         More
+□ ░ ▒ ▓ █
+```
+
+### Requirements
+
+* Display approximately the last 12 months
+* Hover/tap a day to see information
+* Show date
+* Show total focused time
+* Show number of sessions
+* Show primary mode
+* Clearly distinguish inactive days
+
+Example:
+
+```text
+September 10
+
+Focused: 2h 35m
+Sessions: 4
+Main mode: Coding
+```
 
 ### Free Users
 
-Maximum:
+Can view:
 
-- 5 modes
+* Activity
+* Focused time
+* Sessions
+* Current streak
 
-Example modes:
+### Premium-ready
 
-- Study
-- Coding
-- Reading
-- Workout
-- Custom
+Architecture should allow additional statistics later.
 
-### Paid Users
+---
 
-Paid users can access additional modes beyond the free limit.
+# Feature 5 — Statistics
+
+Introduce a dedicated statistics experience.
+
+### Basic Statistics
+
+Users can view:
+
+* Total focused time
+* Today's focused time
+* Weekly focused time
+* Monthly focused time
+* Number of sessions
+* Current streak
+* Longest streak
+
+Example:
+
+```text
+This Week
+
+Focused Time
+8h 42m
+
+Sessions
+17
+
+Average Session
+31m
+
+Active Days
+6 / 7
+```
+
+### Mode Statistics
+
+Show time spent in each mode.
+
+Example:
+
+```text
+Coding      12h 20m
+Study        8h 15m
+Reading      3h 40m
+Workout      2h 10m
+```
+
+Charts should remain lightweight and should not unnecessarily increase bundle size.
+
+---
+
+# Feature 6 — Most Used Mode
+
+Track which focus mode the user uses most.
+
+### Monthly Statistics
+
+Display:
+
+```text
+Your Top Mode
+
+💻 Coding
+
+18h 42m
+```
+
+For the first version of this feature, calculations should happen locally.
+
+No backend is required.
+
+---
+
+# Feature 7 — Rewards
+
+V1.5 introduces a lightweight reward system.
+
+Rewards should encourage consistency rather than encourage users to spend excessive time working.
+
+### Possible Rewards
+
+Users can unlock:
+
+* Themes
+* Accent styles
+* Clock styles
+* Small visual effects
+* Badges
+
+Example:
+
+```text
+🔥 7 Day Streak
+Unlocked: Night Theme
+```
+
+### Reward Principles
+
+Rewards should be:
+
+* Simple
+* Visual
+* Non-intrusive
+* Optional
+* Based on consistency
+
+Avoid aggressive gamification such as:
+
+* Constant notifications
+* Punishing users for stopping
+* Infinite reward popups
+* Competitive leaderboards
+
+---
+
+# Feature 8 — Themes
+
+Expand the V1 theme system.
+
+### Free Users
+
+Provide a small collection of built-in themes.
+
+Example:
+
+* Default
+* Dark
+* Light
+* Midnight
+* Minimal
+
+### Premium-ready
+
+Architecture should support:
+
+* Additional themes
+* Custom theme uploads
+* Theme metadata
+* Theme unlocking
+
+V1.5 does not require real payment verification.
+
+---
+
+# Feature 9 — Improved Focus Modes
+
+Focus modes become more customizable.
 
 Each mode can contain:
 
-- Mode name
-- Icon
-- Theme/accent
-- Session statistics
+* Name
+* Icon
+* Accent
+* Optional description
+* Total focused time
+* Number of sessions
 
-The currently selected mode should be associated with the user's activity.
+Example:
+
+```text
+💻 Coding
+
+Sessions: 32
+Focused: 18h 42m
+```
+
+### Free Limit
+
+Maximum 5 custom/active modes.
+
+### Future Premium
+
+More than 5 modes.
 
 ---
 
-## Feature 4 — Streak System
+# Feature 10 — Better Animations
 
-Flow Clock should encourage consistency using a GitHub-style activity visualization.
+Improve the visual experience without harming performance.
 
-The system records whether the user has used Flow Clock during a day.
+Animations may include:
 
-### Free Users
-
-Free users can see:
-
-- Daily activity
-- Current streak
-- Basic streak history
-- Usage/activity visualization
-
-### Paid Users
-
-Paid users additionally receive:
-
-- More detailed streak statistics
-- Monthly statistics
-- Most-used mode for the month
-- Longer-term productivity insights
-
-### Streak Logic
-
-A day counts as active when the user completes meaningful activity in Flow Clock.
-
-For V1, meaningful activity can be defined as:
-
-> A stopwatch/focus session that reaches a minimum amount of tracked time.
-
-The exact minimum should be configurable in the implementation.
+* Clock transitions
+* Stopwatch state changes
+* Session completion
+* Streak increases
+* Reward unlocks
+* Theme transitions
+* Mode selection
 
 ### Requirements
 
-- Track activity by date
-- Calculate current streak
-- Preserve previous activity
-- Display activity in a GitHub-style grid
-- Store data locally in V1
-- Avoid counting accidental app opens as meaningful work
+Animations should:
+
+* Be short
+* Feel smooth
+* Not block interaction
+* Respect `prefers-reduced-motion`
+* Avoid unnecessary continuous animations
 
 ---
 
-## Feature 5 — Themes
+# Feature 11 — Session Completion Experience
 
-Flow Clock should make progress feel rewarding through customization.
+When a meaningful session ends, show a small completion state.
 
-### Free Users
+Example:
 
-Free users receive:
+```text
+Session Complete ✓
 
-- Default Flow Clock theme
-- Built-in theme options if implemented
+Coding
+42 minutes
 
-### Paid Users
+🔥 8 Day Streak
 
-Paid users can:
++1 Achievement
+```
 
-- Unlock additional themes
-- Upload their own background/theme assets
-- Customize their Flow Clock experience
+The completion screen should quickly return the user to the main application.
 
-Uploaded themes should be stored locally during V1.
-
-### Important
-
-Theme customization should not negatively affect performance.
-
-Large uploaded images should be optimized/compressed where possible.
+Avoid turning every session into a large popup.
 
 ---
 
-# Premium System
+# Feature 12 — Improved Dashboard
 
-V1 should be designed with future premium functionality in mind.
+The main dashboard should provide a quick overview.
 
-However:
+### Dashboard should contain
 
-> V1 does NOT require authentication or real payments.
+* Current time
+* Current date/day
+* Active mode
+* Stopwatch/focus session
+* Current streak
+* Today's focused time
+* Quick access to statistics
+* Recent activity
 
-Premium features should be architected so they can later be connected to Supabase and a payment provider.
-
-### Planned Premium Features
-
-- More than 5 focus modes
-- Custom theme uploads
-- Detailed monthly statistics
-- Most-used mode statistics
-- Additional customization
-
-For V1 development, premium functionality may be represented through a local development/premium flag.
-
-Real subscription verification will be implemented in a future version.
+The dashboard should prioritize the current session rather than overwhelming users with data.
 
 ---
 
 # Data Storage
 
-## V1
+## V1.5
 
-Use browser `localStorage`.
+Continue using:
 
-Data that should be stored locally:
+```text
+localStorage
+```
 
-### User Preferences
+No external database is required.
 
-- Theme
-- Selected mode
-- Clock format
-- UI preferences
+### Suggested Data Structure
 
-### Activity Data
+```text
+flowClock
+├── preferences
+│   ├── theme
+│   ├── clockFormat
+│   └── selectedMode
+│
+├── modes
+│   └── user modes
+│
+├── sessions
+│   └── completed sessions
+│
+├── activity
+│   └── daily activity
+│
+├── streak
+│   ├── current
+│   ├── longest
+│   └── activeDays
+│
+└── rewards
+    └── unlocked rewards
+```
 
-- Activity dates
-- Streak information
-- Session durations
-- Mode used
-- Basic session history
-
-### Premium Development State
-
-- Local premium flag for development/testing
+The exact implementation can use separate localStorage keys or a versioned storage object.
 
 ---
 
-# Future Database
+# Data Migration
 
-Later versions should migrate persistent user data to:
+V1.5 must safely handle existing V1 localStorage data.
 
-- Supabase
+If V1 data exists:
 
-Supabase will eventually handle:
+```text
+V1 data
+   ↓
+Detect storage version
+   ↓
+Migrate data
+   ↓
+V1.5 format
+```
 
-- User accounts
-- User profiles
-- Cloud activity data
-- Premium status
-- Theme metadata
-- Cross-device synchronization
+Users should not lose their existing:
 
-The V1 architecture should avoid making the future migration unnecessarily difficult.
+* Streak
+* Theme
+* Modes
+* Preferences
+* Activity
+
+Storage should use a version number to make future migrations possible.
+
+Example:
+
+```text
+storageVersion: 1.5
+```
 
 ---
 
 # Backend
 
-## V1
+## V1.5
 
-Backend is NOT required for the core application.
+Backend remains unnecessary.
 
-The application should primarily run client-side.
+Do NOT introduce Node.js/Express unless a V1.5 feature genuinely requires server-side processing.
 
-Node.js/Express may be introduced only when a feature actually requires server-side functionality.
-
-Possible future backend responsibilities:
-
-- Authentication
-- Premium/subscription verification
-- User data synchronization
-- Secure API endpoints
-- Payment webhooks
-- Cloud data
+The application should remain primarily client-side.
 
 ---
 
 # Authentication
 
-## V1
+## V1.5
 
 No authentication.
 
-Users should be able to open Flow Clock and immediately use it.
+Users should continue using Flow Clock without:
 
-No:
-
-- Login
-- Signup
-- Password
-- Account creation
-
-User data is stored locally in the browser.
-
-## Future
-
-Authentication will be added when cloud synchronization and premium subscriptions are introduced.
+* Signup
+* Login
+* Password
+* Account
 
 ---
 
-# Deployment
+# Premium Architecture
 
-## Hosting
+V1.5 should be **premium-ready**, but not implement real subscriptions.
 
-Vercel
+Premium features can be represented through a local development flag.
 
-The application should be deployable as a frontend application on Vercel.
+Example:
+
+```text
+isPremium: false
+```
+
+This is only for development/testing.
+
+It must NOT be treated as secure subscription verification.
+
+Real premium access control will be implemented after authentication and backend infrastructure are introduced.
 
 ---
 
@@ -353,152 +640,359 @@ The application should be deployable as a frontend application on Vercel.
 
 ## Frontend
 
-- React.js
-- Vite
-- JavaScript
-- Tailwind CSS
+* React.js
+* Vite
+* JavaScript
+* Tailwind CSS
 
 ## State Management
 
-- React state/hooks initially
-- Zustand where global state becomes necessary
+* React state/hooks
+* Zustand where global state is beneficial
 
 ## Animation
 
-- Framer Motion
+* Framer Motion
 
-Use animations carefully to maintain performance.
+## Charts
 
-## Data Visualization
-
-- Recharts where required for statistics
-- CSS-based GitHub-style activity grid where practical
+* Recharts only where useful
 
 ## Storage
 
-- Browser localStorage for V1
+* localStorage
 
 ## Backend
 
-- None required initially
-- Node.js + Express for future server-side functionality
+None required.
+
+Future:
+
+* Node.js
+* Express
 
 ## Database
 
-V1:
-
-- localStorage
+None.
 
 Future:
 
-- Supabase
+* Supabase
 
 ## Authentication
 
-V1:
-
-- None
+None.
 
 Future:
 
-- Supabase Auth
+* Supabase Auth
 
 ## Deployment
 
-- Vercel
-
----
-
-# Responsive Design
-
-Flow Clock must support:
-
-- Mobile phones
-- Tablets
-- Desktop/laptop screens
-
-### Mobile
-
-Prioritize:
-
-- Clock
-- Stopwatch
-- Mode selection
-- Streak
-
-Controls should be easy to use with touch.
-
-### Tablet
-
-Use a larger dashboard layout while maintaining touch-friendly controls.
-
-### Desktop
-
-Use the full productivity dashboard layout with additional statistics and navigation.
+* Vercel
 
 ---
 
 # Performance Requirements
 
-The application should be optimized to comfortably support at least:
+Flow Clock V1.5 should remain lightweight.
 
-> 100 concurrent users
+### Requirements
 
-Because V1 is primarily client-side and uses localStorage, server load should be minimal.
+* Fast startup
+* Responsive UI
+* Minimal unnecessary re-renders
+* Efficient localStorage access
+* Efficient stopwatch implementation
+* Lazy-load heavy statistics components where appropriate
+* Optimize theme assets
+* Avoid unnecessary dependencies
 
-### Performance Goals
+### Timer Architecture
 
-- Fast initial page load
-- Minimal JavaScript where possible
-- Avoid unnecessary React re-renders
-- Lazy-load heavy components/assets
-- Optimize uploaded theme images
-- Avoid unnecessary animation calculations
-- Keep dependencies minimal
-- Do not run expensive calculations every render
+Do not update the stopwatch using extremely frequent state updates.
 
-### Stopwatch Performance
+Prefer timestamp-based calculations:
 
-The stopwatch should not rely on continuously incrementing a counter every few milliseconds.
+```text
+elapsed = currentTimestamp - startTimestamp
+```
 
-Instead, calculate elapsed time from timestamps.
-
-Example concept:
-
-`elapsedTime = currentTime - startTime`
-
-This keeps the timer accurate without unnecessary CPU usage.
+The UI can update at a reasonable interval while calculating the actual elapsed time from timestamps.
 
 ---
 
-# UX Principles
+# Responsive Design
 
-Flow Clock should feel:
+## Mobile
 
-- Minimal
-- Premium
-- Calm
-- Rewarding
-- Fast
-- Distraction-free
+Prioritize:
 
-The reward system should encourage users without turning the application into a complicated game.
+1. Clock
+2. Active session
+3. Mode
+4. Streak
+5. Today's progress
 
-### Core psychological loop
+Navigation should be touch-friendly.
+
+## Tablet
+
+Use a larger dashboard layout with more information visible simultaneously.
+
+## Desktop
+
+Use the complete dashboard experience with:
+
+* Sidebar/navigation
+* Clock
+* Focus session
+* Streak
+* Statistics
+* Activity
+
+---
+
+# Accessibility
+
+V1.5 should improve accessibility.
+
+Requirements:
+
+* Keyboard navigation
+* Visible focus states
+* Sufficient text contrast
+* Semantic HTML
+* Accessible buttons
+* Screen-reader-friendly labels
+* Reduced-motion support
+
+Animations must not be the only way information is communicated.
+
+---
+
+# Error Handling
+
+The application should handle localStorage failures gracefully.
+
+Possible problems:
+
+* Storage unavailable
+* Corrupted stored data
+* Invalid stored values
+* Storage quota exceeded
+
+If stored data is invalid:
 
 ```text
-Start working
-     ↓
-Track session
-     ↓
-Complete meaningful work
-     ↓
-Activity recorded
-     ↓
-Streak increases
-     ↓
-Progress becomes visible
-     ↓
-Customization/rewards
-     ↓
-User wants to continue
+Detect invalid data
+       ↓
+Attempt recovery
+       ↓
+Preserve valid data
+       ↓
+Reset only corrupted section
+```
+
+The application should avoid crashing because of malformed local data.
+
+---
+
+# Security
+
+Since V1.5 has no authentication or backend:
+
+* Do not store sensitive information
+* Do not trust local premium flags for future real subscriptions
+* Sanitize uploaded theme assets
+* Validate image types and sizes
+* Avoid executing user-provided content
+* Keep dependencies updated
+
+Custom uploaded themes should be treated as untrusted user input.
+
+---
+
+# Testing
+
+## Unit Testing
+
+Test:
+
+* Streak calculation
+* Activity calculation
+* Session duration
+* Mode statistics
+* Date calculations
+* Reward unlocking
+* Storage migration
+
+## Component Testing
+
+Test:
+
+* Stopwatch
+* Clock
+* Mode selector
+* Streak grid
+* Statistics
+* Theme selector
+
+## Integration Testing
+
+Test:
+
+```text
+Start session
+→ Complete session
+→ Save session
+→ Update activity
+→ Update streak
+→ Update statistics
+```
+
+## Responsive Testing
+
+Test:
+
+* Mobile
+* Tablet
+* Desktop
+
+---
+
+# Deployment
+
+Deploy using:
+
+```text
+Vercel
+```
+
+The project should be production-build tested before deployment.
+
+---
+
+# Constraints
+
+## Budget
+
+₹0
+
+No paid infrastructure should be required.
+
+---
+
+## Hosting
+
+Vercel free tier.
+
+---
+
+## Database
+
+No external database.
+
+Use localStorage.
+
+---
+
+## Authentication
+
+No authentication.
+
+---
+
+## Backend
+
+No backend unless technically necessary.
+
+---
+
+## Performance
+
+The application should comfortably handle at least:
+
+> 100 users
+
+Since V1.5 remains primarily client-side, user count should have minimal impact on the core application.
+
+---
+
+# V1.5 Must Have
+
+* [ ] Improved stopwatch/session tracking
+* [ ] Session history
+* [ ] Improved streak system
+* [ ] GitHub-style activity grid
+* [ ] Weekly statistics
+* [ ] Monthly statistics
+* [ ] Total focused time
+* [ ] Mode statistics
+* [ ] Most-used mode
+* [ ] Improved dashboard
+* [ ] Reward system
+* [ ] More built-in themes
+* [ ] Improved focus modes
+* [ ] Session completion experience
+* [ ] Better animations
+* [ ] Responsive improvements
+* [ ] Accessibility improvements
+* [ ] V1 → V1.5 localStorage migration
+* [ ] Performance optimization
+
+---
+
+# V1.5 Should NOT Include
+
+* [ ] Authentication
+* [ ] User accounts
+* [ ] Real payments
+* [ ] Subscription system
+* [ ] Supabase
+* [ ] Cloud synchronization
+* [ ] Node.js/Express backend
+* [ ] Social features
+* [ ] AI features
+* [ ] Leaderboards
+* [ ] Complex multiplayer functionality
+
+---
+
+# Success Criteria
+
+V1.5 is successful when a user can:
+
+1. Open Flow Clock immediately without authentication.
+2. Start a focused session.
+3. Select a mode.
+4. Complete meaningful work.
+5. Automatically save the session.
+6. See their daily activity update.
+7. See their streak update.
+8. Review previous sessions.
+9. View weekly/monthly productivity statistics.
+10. See which mode they use most.
+11. Unlock meaningful rewards through consistency.
+12. Customize their experience with themes.
+13. Return later and have all local data preserved.
+
+The primary success metric is:
+
+> Does Flow Clock make consistent focused work feel more rewarding than simply using a normal stopwatch?
+
+---
+
+# Product Principle
+
+Flow Clock should never become a productivity dashboard that users spend more time configuring than working.
+
+The priority remains:
+
+```text
+WORK > TRACK > REWARD > RETURN
+```
+
+Every V1.5 feature should strengthen this loop.
+
+If a feature adds complexity without improving the user's motivation, consistency, or focus, it should not be included in V1.5.

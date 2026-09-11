@@ -21,7 +21,7 @@ function AppContent() {
 }
 
 function AppShell({ children, view, setView }) {
-  const { flow, storageAvailable } = useFlow();
+  const { flow, persistenceError, storageAvailable } = useFlow();
   const themeStyle =
     flow.preferences.customTheme && flow.preferences.themeId === "custom"
       ? { "--theme-image": `url(${flow.preferences.customTheme.image})` }
@@ -32,9 +32,9 @@ function AppShell({ children, view, setView }) {
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
       <Topbar view={view} setView={setView} />
-      {!storageAvailable && (
+      {(!storageAvailable || persistenceError) && (
         <p className="notice" role="status">
-          Your browser is blocking local storage. Changes will last only until
+          Your browser cannot save Flow Clock data right now. Changes will last only until
           this tab closes.
         </p>
       )}

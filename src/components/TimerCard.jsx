@@ -22,7 +22,7 @@ export function TimerCard() {
         ) : <button className="secondary" onClick={stopwatch.pause}>Pause</button>}
         <button className="quiet" onClick={completeSession} disabled={stopwatch.elapsedMs < 1000}>Finish & reset</button>
       </div>
-      <p className="hint">Sessions of {Math.round(MEANINGFUL_SESSION_MS / 60000)} minute or longer count toward your daily activity.</p>
+      <p className="hint">Sessions of {Math.round(MEANINGFUL_SESSION_MS / 60000)} minutes or longer count toward your daily activity.</p>
     </section>
   );
 }

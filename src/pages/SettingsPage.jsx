@@ -21,11 +21,15 @@ function ThemeSettings() {
   return <section className="settings-section">
     <h2>Theme</h2>
     <div className="theme-options">
-      {themes.map((theme) => <button key={theme.id} onClick={() => updatePreferences({ themeId: theme.id })} className={flow.preferences.themeId === theme.id ? "selected" : ""}><i style={{ background: theme.swatch }} />{theme.name}</button>)}
+      {themes.map((theme) => {
+        const unlocked = flow.rewards.unlockedThemes.includes(theme.id);
+        return <button key={theme.id} disabled={!unlocked} title={unlocked ? theme.name : `Unlock with a ${theme.id === "light" ? "7" : "30"}-day streak`} onClick={() => updatePreferences({ themeId: theme.id })} className={flow.preferences.themeId === theme.id ? "selected" : ""}><i style={{ background: theme.swatch }} />{theme.name}{!unlocked && " 🔒"}</button>
+      })}
       <button onClick={() => fileInput.current?.click()} className={flow.preferences.themeId === "custom" ? "selected" : ""}><i className="custom-swatch" />Custom</button>
     </div>
     <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handleThemeFile} hidden />
     {flow.preferences.customTheme && <p className="hint">Using {flow.preferences.customTheme.name}</p>}
+    <p className="hint">Unlock Light at a 7-day streak and Minimal at a 30-day streak.</p>
     {uploadError && <p className="field-error" role="alert">{uploadError}</p>}
   </section>;
 }

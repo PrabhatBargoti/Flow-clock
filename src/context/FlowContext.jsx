@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import {
   defaultModes,
   MAX_FREE_MODES,
   MEANINGFUL_SESSION_MS,
+  SESSION_HISTORY_LIMIT,
 } from "../data/defaults";
 import { useStopwatch } from "../hooks/useStopwatch";
 import { loadState, saveState } from "../services/storage";
@@ -10,18 +11,22 @@ import {
   activityDays,
   activityTotal,
   calculateCurrentStreak,
+  calculateLongestStreak,
 } from "../utils/streak";
 import { localDateKey } from "../utils/time";
+import { calculateStats } from "../utils/stats";
 import { FlowContext } from "./flowStore";
 
 export function FlowProvider({ children }) {
   const [initial] = useState(() => loadState());
   const [flow, setFlow] = useState(initial.state);
+  const [completion, setCompletion] = useState(null);
+  const [persistenceError, setPersistenceError] = useReducer((_, value) => value, false);
   const storageAvailable = initial.storageAvailable;
   const stopwatch = useStopwatch();
 
   useEffect(() => {
-    saveState(flow);
+    setPersistenceError(!saveState(flow));
   }, [flow]);
 
   const selectedMode =
@@ -37,41 +42,12 @@ export function FlowProvider({ children }) {
     [flow.activity],
   );
   const grid = useMemo(() => activityDays(flow.activity), [flow.activity]);
+  const longestStreak = useMemo(() => calculateLongestStreak(flow.activity), [flow.activity]);
+  const stats = useMemo(() => calculateStats(flow.sessions), [flow.sessions]);
   const defaultModeIds = useMemo(
     () => new Set(defaultModes.map((m) => m.id)),
     [],
   );
-
-  const monthlyStats = useMemo(() => {
-    const today = new Date();
-    const month = today.getMonth();
-    const year = today.getFullYear();
-    const sessions = flow.sessions.filter((session) => {
-      const date = new Date(session.endedAt);
-      return (
-        session.meaningful &&
-        date.getMonth() === month &&
-        date.getFullYear() === year
-      );
-    });
-    const byMode = sessions.reduce(
-      (counts, session) => ({
-        ...counts,
-        [session.modeId]: (counts[session.modeId] || 0) + session.durationMs,
-      }),
-      {},
-    );
-    const mostUsedId = Object.keys(byMode).sort(
-      (a, b) => byMode[b] - byMode[a],
-    )[0];
-    return {
-      duration: sessions.reduce(
-        (total, session) => total + session.durationMs,
-        0,
-      ),
-      mostUsedId,
-    };
-  }, [flow.sessions]);
 
   const updatePreferences = (patch) =>
     setFlow((current) => ({
@@ -126,12 +102,18 @@ export function FlowProvider({ children }) {
           sessionCount: old.sessionCount + 1,
         };
       }
+      const nextStreak = meaningful ? calculateCurrentStreak(activity) : calculateCurrentStreak(current.activity);
+      const unlockedThemes = [...current.rewards.unlockedThemes];
+      if (nextStreak >= 7 && !unlockedThemes.includes("light")) unlockedThemes.push("light");
+      if (nextStreak >= 30 && !unlockedThemes.includes("minimal")) unlockedThemes.push("minimal");
       return {
         ...current,
-        sessions: [...current.sessions, session].slice(-500),
+        sessions: [...current.sessions, session].slice(-SESSION_HISTORY_LIMIT),
         activity,
+        rewards: { ...current.rewards, unlockedThemes },
       };
     });
+    if (meaningful) setCompletion({ mode: selectedMode, durationMs, streak: calculateCurrentStreak({ ...flow.activity, [localDateKey(endedAt)]: true }) });
   }
 
   function addMode(name) {
@@ -159,12 +141,14 @@ export function FlowProvider({ children }) {
   const value = {
     flow,
     storageAvailable,
+    persistenceError,
     stopwatch,
     selectedMode,
     streak,
+    longestStreak,
     totalDuration,
     grid,
-    monthlyStats,
+    stats,
     defaultModeIds,
     updatePreferences,
     selectMode,
@@ -172,6 +156,8 @@ export function FlowProvider({ children }) {
     togglePremium,
     completeSession,
     addMode,
+    completion,
+    dismissCompletion: () => setCompletion(null),
   };
 
   return <FlowContext.Provider value={value}>{children}</FlowContext.Provider>;
