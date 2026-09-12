@@ -1,6 +1,6 @@
 # Flow Clock — Calm Productivity for Focused Work
 
-![Flow Clock Logo](./docs/assets/logo.png)
+![Flow Clock Logo](./src//assets/image.png)
 
 > **Flow Clock** — A powerful, privacy-first productivity tool that makes focused work feel rewarding. Track sessions, build streaks, visualize your activity, and unlock themes as you maintain consistent daily habits.
 
